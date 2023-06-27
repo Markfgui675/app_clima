@@ -11,6 +11,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  ValueNotifier<Color> color = ValueNotifier(Colors.black);
+
   _pesquisar() async {
     String chave_api = '18ebbd17';
 
@@ -30,16 +32,42 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Clima'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () => _pesquisar(),
-            child: Text("Pesquisar clima")
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            backgroundColor: MaterialStateColor.resolveWith((Set<MaterialState> states){
+              if(states.contains(MaterialState.scrolledUnder)){
+                color.value = Colors.white;
+                return Colors.deepPurple;
+              }
+              color.value = Colors.black;
+              return Colors.deepOrangeAccent;
+            }),
+            toolbarHeight: 120,
+            expandedHeight: 200,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: AnimatedBuilder(
+                animation: color,
+                builder: (context, _){
+                  return Text('Cliente', style: TextStyle(color: color.value),);
+                },
+              ),
+
+            ),
+
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              childCount: 9,
+              (context, int index){
+                return Container(
+                  height: 120,
+                  color: Colors.red,
+                );
+              }
+            ),
+
           )
         ],
       ),
